@@ -1,0 +1,26 @@
+# Test repository configuration
+ci:
+  go:
+    versions:
+      - "1.23"
+      - "1.24"
+  python:
+    versions:
+      - "3.12"
+      - "3.13"
+  rust:
+    versions:
+      - "1.75"
+  coverage:
+    threshold: 85
+
+release:
+  go:
+    enabled: true
+  python:
+    enabled: true
+
+docker:
+  platforms:
+    - "linux/amd64"
+    - "linux/arm64"

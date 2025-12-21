@@ -1,0 +1,46 @@
+# file: action.yml
+# version: 1.0.0
+# guid: 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a
+
+name: "Load Repository Config"
+description: "Load and parse .github/repository-config.yml with fallback handling"
+author: "jdfalk"
+
+branding:
+  icon: "file-text"
+  color: "blue"
+
+inputs:
+  config-file:
+    description: "Path to repository config YAML file"
+    required: false
+    default: ".github/repository-config.yml"
+
+  fail-on-missing:
+    description: "Fail if config file is missing"
+    required: false
+    default: "false"
+
+outputs:
+  config:
+    description: "Parsed configuration as JSON string"
+    value: ${{ steps.load.outputs.config }}
+
+  has-config:
+    description: "Whether config file exists and was parsed successfully"
+    value: ${{ steps.load.outputs.has-config }}
+
+  raw-yaml:
+    description: "Raw YAML content (if exists)"
+    value: ${{ steps.load.outputs.raw-yaml }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Load and parse configuration
+      id: load
+      shell: python
+      env:
+        CONFIG_FILE: ${{ inputs.config-file }}
+        FAIL_ON_MISSING: ${{ inputs.fail-on-missing }}
+      run: python "${{ github.action_path }}/src/load_config.py"
