@@ -1,5 +1,5 @@
 # file: action.yml
-# version: 1.0.0
+# version: 1.0.1
 # guid: 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a
 
 name: "Load Repository Config"
@@ -39,7 +39,7 @@ runs:
   steps:
     - name: Load and parse configuration
       id: load
-      shell: python
+      shell: bash
       env:
         CONFIG_FILE: ${{ inputs.config-file }}
         FAIL_ON_MISSING: ${{ inputs.fail-on-missing }}
