@@ -1,6 +1,7 @@
 # Load Repository Config Action
 
-Load and parse `.github/repository-config.yml` with fallback handling for GitHub Actions workflows.
+Load and parse `.github/repository-config.yml` with fallback handling for GitHub
+Actions workflows.
 
 ## Features
 
@@ -40,7 +41,7 @@ jobs:
   id: config
   with:
     config-file: .github/repository-config.yml
-    fail-on-missing: true  # Workflow fails if config missing
+    fail-on-missing: true # Workflow fails if config missing
 ```
 
 ### Using Config in Downstream Steps
@@ -91,15 +92,15 @@ The action expects a YAML file like `.github/repository-config.yml`:
 ci:
   go:
     versions:
-      - "1.23"
-      - "1.24"
+      - '1.23'
+      - '1.24'
   python:
     versions:
-      - "3.12"
-      - "3.13"
+      - '3.12'
+      - '3.13'
   rust:
     versions:
-      - "1.75"
+      - '1.75'
   coverage:
     threshold: 85
 
@@ -110,8 +111,8 @@ release:
     enabled: true
   docker:
     platforms:
-      - "linux/amd64"
-      - "linux/arm64"
+      - 'linux/amd64'
+      - 'linux/arm64'
 ```
 
 ## Step Summary Output
@@ -128,7 +129,8 @@ The action provides rich feedback in the GitHub Actions UI:
 
 - **Missing config (default)**: Logs warning, continues with empty config `{}`
 - **Missing config (fail-on-missing=true)**: Logs error, exits with code 1
-- **Invalid YAML**: Logs error, continues with empty config or fails based on setting
+- **Invalid YAML**: Logs error, continues with empty config or fails based on
+  setting
 - **File read error**: Logs error, exits with code 1
 
 ## Requirements

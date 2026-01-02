@@ -1,64 +1,64 @@
 name: CI
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-    test-with-config:
-        name: Test With Valid Config
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+  test-with-config:
+    name: Test With Valid Config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-            - uses: ./
-              id: config
-              with:
-                  config-file: test-project/.github/repository-config.yml
+      - uses: ./
+        id: config
+        with:
+          config-file: test-project/.github/repository-config.yml
 
-            - name: Verify outputs
-              run: |
-                  echo "Has config: ${{ steps.config.outputs.has-config }}"
-                  if [ "${{ steps.config.outputs.has-config }}" != "true" ]; then
-                    echo "ERROR: Expected has-config=true"
-                    exit 1
-                  fi
+      - name: Verify outputs
+        run: |
+          echo "Has config: ${{ steps.config.outputs.has-config }}"
+          if [ "${{ steps.config.outputs.has-config }}" != "true" ]; then
+            echo "ERROR: Expected has-config=true"
+            exit 1
+          fi
 
-                  config='${{ steps.config.outputs.config }}'
-                  echo "Config: $config"
+          config='${{ steps.config.outputs.config }}'
+          echo "Config: $config"
 
-                  if ! echo "$config" | python3 -m json.tool > /dev/null; then
-                    echo "ERROR: Config is not valid JSON"
-                    exit 1
-                  fi
+          if ! echo "$config" | python3 -m json.tool > /dev/null; then
+            echo "ERROR: Config is not valid JSON"
+            exit 1
+          fi
 
-                  echo "✅ All validations passed"
+          echo "✅ All validations passed"
 
-    test-without-config:
-        name: Test With Missing Config
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+  test-without-config:
+    name: Test With Missing Config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-            - uses: ./
-              id: config
-              with:
-                  config-file: nonexistent/.github/config.yml
-                  fail-on-missing: "false"
+      - uses: ./
+        id: config
+        with:
+          config-file: nonexistent/.github/config.yml
+          fail-on-missing: 'false'
 
-            - name: Verify fallback behavior
-              run: |
-                  echo "Has config: ${{ steps.config.outputs.has-config }}"
-                  if [ "${{ steps.config.outputs.has-config }}" != "false" ]; then
-                    echo "ERROR: Expected has-config=false for missing file"
-                    exit 1
-                  fi
+      - name: Verify fallback behavior
+        run: |
+          echo "Has config: ${{ steps.config.outputs.has-config }}"
+          if [ "${{ steps.config.outputs.has-config }}" != "false" ]; then
+            echo "ERROR: Expected has-config=false for missing file"
+            exit 1
+          fi
 
-                  if [ "${{ steps.config.outputs.config }}" != "{}" ]; then
-                    echo "ERROR: Expected empty config {}"
-                    exit 1
-                  fi
+          if [ "${{ steps.config.outputs.config }}" != "{}" ]; then
+            echo "ERROR: Expected empty config {}"
+            exit 1
+          fi
 
-                  echo "✅ Graceful fallback working"
+          echo "✅ Graceful fallback working"
