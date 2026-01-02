@@ -17,6 +17,7 @@ try:
 except ImportError:
     print("::notice::Installing PyYAML...")
     import subprocess
+
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "PyYAML"])
     import yaml
 
@@ -80,9 +81,7 @@ def main() -> None:
 
         if data:
             keys = list(data.keys())
-            write_summary(
-                f"\n**Config sections:** {', '.join(f'`{k}`' for k in keys)}"
-            )
+            write_summary(f"\n**Config sections:** {', '.join(f'`{k}`' for k in keys)}")
             print(f"Config sections: {', '.join(keys)}")
 
     except yaml.YAMLError as e:
