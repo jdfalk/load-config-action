@@ -1,5 +1,5 @@
 # file: action.yml
-# version: 1.0.1
+# version: 1.1.0
 # guid: 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a
 
 name: "Load Repository Config"
@@ -20,25 +20,68 @@ inputs:
     description: "Fail if config file is missing"
     required: false
     default: "false"
+  use-docker:
+    description: "Run inside the prebuilt Docker image"
+    required: false
+    default: "false"
+  docker-image:
+    description: "Docker image reference (tag or digest) to use when use-docker is true"
+    required: false
+    default: "ghcr.io/jdfalk/load-config-action:main"
 
 outputs:
   config:
     description: "Parsed configuration as JSON string"
-    value: ${{ steps.load.outputs.config }}
+    value: ${{ steps.load.outputs.config || steps.load-docker.outputs.config }}
 
   has-config:
     description: "Whether config file exists and was parsed successfully"
-    value: ${{ steps.load.outputs.has-config }}
+    value: ${{ steps.load.outputs.has-config || steps.load-docker.outputs.has-config }}
 
   raw-yaml:
     description: "Raw YAML content (if exists)"
-    value: ${{ steps.load.outputs.raw-yaml }}
+    value: ${{ steps.load.outputs.raw-yaml || steps.load-docker.outputs.raw-yaml }}
 
 runs:
   using: "composite"
   steps:
-    - name: Load and parse configuration
+    - name: Load and parse configuration (docker)
+      id: load-docker
+      if: inputs.use-docker == 'true'
+      shell: bash
+      env:
+        CONFIG_FILE: ${{ inputs.config-file }}
+        FAIL_ON_MISSING: ${{ inputs.fail-on-missing }}
+        DOCKER_IMAGE: ${{ inputs.docker-image }}
+      run: |
+        set -euo pipefail
+
+        if ! command -v docker >/dev/null 2>&1; then
+          echo "::error::Docker is required when use-docker is true."
+          exit 1
+        fi
+
+        touch "$GITHUB_OUTPUT" "$GITHUB_STEP_SUMMARY"
+
+        if ! docker pull "$DOCKER_IMAGE"; then
+          echo "::warning::Pull failed, building $DOCKER_IMAGE locally."
+          docker build --tag "$DOCKER_IMAGE" "${{ github.action_path }}"
+        fi
+
+        docker run --rm \
+          -e CONFIG_FILE \
+          -e FAIL_ON_MISSING \
+          -e GITHUB_OUTPUT \
+          -e GITHUB_STEP_SUMMARY \
+          -v "$GITHUB_OUTPUT:$GITHUB_OUTPUT" \
+          -v "$GITHUB_STEP_SUMMARY:$GITHUB_STEP_SUMMARY" \
+          -v "${{ github.workspace }}:/repo" \
+          -w /repo \
+          "$DOCKER_IMAGE"
+
+    - name: Load and parse configuration (host)
       id: load
+      if: inputs.use-docker != 'true'
       shell: bash
       env:
         CONFIG_FILE: ${{ inputs.config-file }}

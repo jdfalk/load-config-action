@@ -70,10 +70,12 @@ jobs:
 
 ## Inputs
 
-| Input             | Description                         | Required | Default                         |
-| ----------------- | ----------------------------------- | -------- | ------------------------------- |
-| `config-file`     | Path to repository config YAML file | No       | `.github/repository-config.yml` |
-| `fail-on-missing` | Fail if config file is missing      | No       | `false`                         |
+| Input             | Description                                                      | Required | Default                                  |
+| ----------------- | ---------------------------------------------------------------- | -------- | ---------------------------------------- |
+| `config-file`     | Path to repository config YAML file                              | No       | `.github/repository-config.yml`          |
+| `fail-on-missing` | Fail if config file is missing                                   | No       | `false`                                  |
+| `use-docker`      | Run the action inside the published container image              | No       | `false`                                  |
+| `docker-image`    | Docker image reference (tag or digest) when `use-docker` is true | No       | `ghcr.io/jdfalk/load-config-action:main` |
 
 ## Outputs
 
@@ -115,11 +117,21 @@ release:
       - 'linux/arm64'
 ```
 
+### Force Docker execution
+
+```yaml
+- uses: jdfalk/load-config-action@v1
+  id: config
+  with:
+    use-docker: true
+    docker-image: ghcr.io/jdfalk/load-config-action:main
+```
+
 ## Step Summary Output
 
 The action provides rich feedback in the GitHub Actions UI:
 
-```
+```text
 ✅ Loaded config from `.github/repository-config.yml`
 
 **Config sections:** `ci`, `release`, `docker`

@@ -17,3 +17,18 @@ and this project adheres to
 - Optional `fail-on-missing` input for strict validation
 - Rich step summaries with config sections
 - JSON output for downstream GitHub Actions
+
+## [Unreleased]
+
+### Added
+
+- Dockerized execution path controlled by `use-docker`/`docker-image`
+- Automated GHCR publish workflow with digest pinning and tag bump
+
+### Changed
+
+- Updated composite action outputs to support host and docker paths
+
+### Security
+
+- Container base pinned by digest for reproducible builds

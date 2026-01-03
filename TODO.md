@@ -7,6 +7,7 @@
 - [x] Add README.md with usage examples
 - [x] Add LICENSE (MIT)
 - [x] Add CHANGELOG.md
+- [x] Add Dockerized execution path and publish workflow (2026-01-03)
 - [ ] Create test CI workflow (.github/workflows/ci.yml)
 - [ ] Create test fixtures (test-project/.github/repository-config.yml)
 - [ ] Test with missing config file
